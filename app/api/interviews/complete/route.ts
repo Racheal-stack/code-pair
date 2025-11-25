@@ -5,7 +5,6 @@ import path from 'path'
 const completionsFilePath = path.join(process.cwd(), 'interview-completions.json')
 const interviewsFilePath = path.join(process.cwd(), 'interviews.json')
 
-// Load completions from file
 function loadCompletions() {
   try {
     if (fs.existsSync(completionsFilePath)) {
@@ -18,7 +17,6 @@ function loadCompletions() {
   return []
 }
 
-// Save completions to file
 function saveCompletions(completions: any[]) {
   try {
     fs.writeFileSync(completionsFilePath, JSON.stringify(completions, null, 2))
@@ -28,7 +26,6 @@ function saveCompletions(completions: any[]) {
   }
 }
 
-// Load and update interviews
 function updateInterviewStatus(interviewId: string, status: 'completed') {
   try {
     if (fs.existsSync(interviewsFilePath)) {
@@ -74,7 +71,6 @@ export async function POST(request: NextRequest) {
     completions.push(completion)
     saveCompletions(completions)
     
-    // Update the interview status
     updateInterviewStatus(interviewId, 'completed')
     
     console.log(`✅ Interview ${interviewId} completed with reason: ${completionReason}`)

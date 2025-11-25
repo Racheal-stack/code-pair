@@ -14,13 +14,13 @@ export default function CreateInterviewPage() {
     candidateEmail: "",
     date: "",
     time: "",
-    duration: "60", // Duration in minutes
+    duration: "60",
     platform: "Google Meet",
     platformLink: "",
     description: "",
     questions: [""],
     selectedChallenges: [] as string[],
-    assessmentMode: "live" // "live", "assessment", "both"
+    assessmentMode: "live"
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -65,7 +65,6 @@ export default function CreateInterviewPage() {
     })
   }
 
-  // Fetch challenges on component mount
   useEffect(() => {
     const fetchChallenges = async () => {
       try {
@@ -91,15 +90,12 @@ export default function CreateInterviewPage() {
     try {
       setLoading(true)
       
-      // Generate interview ID
       const interviewId = Date.now().toString()
       
-      // Get user data
       const currentSession = localStorage.getItem('currentSession')
       const userStr = currentSession ? localStorage.getItem(`user_${currentSession}`) : null
       const userData = userStr ? JSON.parse(userStr) : null
       
-      // Create interview in database
       const interviewData = {
         id: interviewId,
         title: formData.title,
@@ -133,7 +129,6 @@ export default function CreateInterviewPage() {
         throw new Error('Failed to create interview')
       }
 
-      // Send invitation
       const invitationData = {
         interviewId,
         candidateEmail: formData.candidateEmail,
@@ -161,7 +156,6 @@ export default function CreateInterviewPage() {
       const result = await response.json()
       console.log('📧 Invitation sent:', result)
       
-      // Show invitation details instead of redirecting immediately
       setInvitationDetails(result)
       setInvitationSent(true)
       
@@ -280,7 +274,6 @@ export default function CreateInterviewPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Basic Information */}
           <div className="bg-secondary/50 border border-border rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <MessageSquare className="w-5 h-5" />
@@ -344,7 +337,6 @@ export default function CreateInterviewPage() {
             </div>
           </div>
 
-          {/* Scheduling */}
           <div className="bg-secondary/50 border border-border rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <Calendar className="w-5 h-5" />
@@ -394,7 +386,6 @@ export default function CreateInterviewPage() {
             </div>
           </div>
 
-          {/* Platform Selection */}
           <div className="bg-secondary/50 border border-border rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <Video className="w-5 h-5" />
@@ -432,7 +423,6 @@ export default function CreateInterviewPage() {
             </div>
           </div>
 
-          {/* Questions */}
           <div className="bg-secondary/50 border border-border rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <MessageSquare className="w-5 h-5" />
@@ -473,7 +463,6 @@ export default function CreateInterviewPage() {
             </div>
           </div>
 
-          {/* Assessment Mode */}
           <div className="bg-secondary/50 border border-border rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <MessageSquare className="w-5 h-5" />
@@ -528,7 +517,6 @@ export default function CreateInterviewPage() {
             </div>
           </div>
 
-          {/* Challenge Selection */}
           {(formData.assessmentMode === "assessment" || formData.assessmentMode === "both") && (
             <div className="bg-secondary/50 border border-border rounded-lg p-6">
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">

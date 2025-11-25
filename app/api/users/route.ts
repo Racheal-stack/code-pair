@@ -11,7 +11,6 @@ export async function GET(request: NextRequest) {
         name: user.name,
         email: user.email,
         role: user.role
-        // Don't return passwords for security
       }))
     })
   } catch (error) {

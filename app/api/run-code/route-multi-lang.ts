@@ -18,12 +18,10 @@ interface TestResult {
   error?: string
 }
 
-// JavaScript execution (current implementation)
 function executeJavaScript(code: string, testCases: TestCase[]): TestResult[] {
   const results: TestResult[] = []
   
   try {
-    // Create a safe evaluation environment
     const safeGlobal = {
       console: {
         log: (...args: any[]) => console.log('User code:', ...args)
@@ -38,12 +36,10 @@ function executeJavaScript(code: string, testCases: TestCase[]): TestResult[] {
       Number
     }
 
-    // Execute the user code in a controlled environment
     const codeToExecute = `
       (function() {
         ${code}
         
-        // Export the main function
         if (typeof twoSum !== 'undefined') {
           return twoSum;
         } else if (typeof solution !== 'undefined') {
@@ -55,8 +51,7 @@ function executeJavaScript(code: string, testCases: TestCase[]): TestResult[] {
         } else if (typeof reverseString !== 'undefined') {
           return reverseString;
         } else {
-          // Try to find any function in the code
-          const functionMatch = \`${code}\`.match(/function\\s+(\\w+)\\s*\\(/);
+          const functionMatch = \`${code}\`.match(/function\s+(\w+)\s*\(/);
           if (functionMatch) {
             return eval(functionMatch[1]);
           }
@@ -65,7 +60,6 @@ function executeJavaScript(code: string, testCases: TestCase[]): TestResult[] {
       })()
     `
 
-    // Use Function constructor for safer evaluation
     const func = new Function('console', 'Math', 'parseInt', 'parseFloat', 'JSON', 'Array', 'Object', 'String', 'Number', `return ${codeToExecute}`)
     const userFunction = func(safeGlobal.console, safeGlobal.Math, safeGlobal.parseInt, safeGlobal.parseFloat, safeGlobal.JSON, safeGlobal.Array, safeGlobal.Object, safeGlobal.String, safeGlobal.Number)
 
@@ -79,7 +73,6 @@ function executeJavaScript(code: string, testCases: TestCase[]): TestResult[] {
       }]
     }
 
-    // Run each test case
     for (let i = 0; i < testCases.length; i++) {
       const testCase = testCases[i]
       
@@ -87,15 +80,12 @@ function executeJavaScript(code: string, testCases: TestCase[]): TestResult[] {
         let actualResult
         let expectedResult
 
-        // Parse different input formats
         if (testCase.input.includes('target:')) {
-          // Handle Two Sum format: [2,7,11,15] target: 9
           const [arrayPart, targetPart] = testCase.input.split('target:')
           const nums = JSON.parse(arrayPart.trim())
           const target = parseInt(targetPart.trim())
           actualResult = userFunction(nums, target)
         } else if (testCase.input.startsWith('[') && testCase.input.includes('],')) {
-          // Handle multiple array inputs
           const inputs = testCase.input.split('],').map((part, index, arr) => {
             if (index < arr.length - 1) {
               return JSON.parse(part + ']')
@@ -105,15 +95,12 @@ function executeJavaScript(code: string, testCases: TestCase[]): TestResult[] {
           })
           actualResult = userFunction(...inputs)
         } else if (testCase.input.startsWith('[')) {
-          // Handle single array input
           const inputArray = JSON.parse(testCase.input)
           actualResult = userFunction(inputArray)
         } else if (testCase.input.startsWith('"')) {
-          // Handle string input
           const inputString = JSON.parse(testCase.input)
           actualResult = userFunction(inputString)
         } else {
-          // Handle numeric or other simple inputs
           const numericInput = parseFloat(testCase.input)
           if (!isNaN(numericInput)) {
             actualResult = userFunction(numericInput)
@@ -124,10 +111,8 @@ function executeJavaScript(code: string, testCases: TestCase[]): TestResult[] {
 
         expectedResult = JSON.parse(testCase.expectedOutput)
 
-        // Compare results (arrays need special handling)
         let passed = false
         if (Array.isArray(actualResult) && Array.isArray(expectedResult)) {
-          // For arrays, sort both before comparing (for problems like Two Sum where order might vary)
           if (actualResult.length === expectedResult.length) {
             const sortedActual = [...actualResult].sort((a, b) => a - b)
             const sortedExpected = [...expectedResult].sort((a, b) => a - b)
@@ -169,49 +154,40 @@ function executeJavaScript(code: string, testCases: TestCase[]): TestResult[] {
   }
 }
 
-// Python execution using child process
 async function executePython(code: string, testCases: TestCase[]): Promise<TestResult[]> {
   return new Promise((resolve) => {
     const results: TestResult[] = []
     
     try {
-      // Create temporary directory for Python execution
       const tempDir = mkdtempSync(join(tmpdir(), 'python-exec-'))
       const pythonFile = join(tempDir, 'solution.py')
       
-      // Write Python code to file
       writeFileSync(pythonFile, code)
       
       let completedTests = 0
       
-      // Process each test case
       for (let i = 0; i < testCases.length; i++) {
         const testCase = testCases[i]
         
-        // Create test script for this specific test case
         const testScript = `
 import sys
 import json
 import os
-sys.path.append('${tempDir.replace(/\\\\/g, '/')}')
+sys.path.append('${tempDir.replace(/\\/g, '/')}')
 
 try:
-    # Import all functions from solution
-    exec(open('${pythonFile.replace(/\\\\/g, '/')}').read())
+    exec(open('${pythonFile.replace(/\\/g, '/')}').read())
     
-    # Parse input
     input_str = '''${testCase.input}'''
     expected_str = '''${testCase.expectedOutput}'''
     
     result = None
     
     if 'target:' in input_str:
-        # Handle Two Sum format
         array_part, target_part = input_str.split('target:')
         nums = json.loads(array_part.strip())
         target = int(target_part.strip())
         
-        # Try different function names
         if 'twoSum' in globals():
             result = twoSum(nums, target)
         elif 'two_sum' in globals():
@@ -222,7 +198,6 @@ try:
             raise Exception("No twoSum, two_sum, or solution function found")
             
     elif input_str.startswith('['):
-        # Handle array input
         input_data = json.loads(input_str)
         
         if 'solution' in globals():
@@ -232,7 +207,6 @@ try:
         elif 'is_palindrome' in globals():
             result = is_palindrome(input_data)
         else:
-            # Try to find any function that takes one parameter
             for name in dir():
                 if not name.startswith('_') and callable(globals()[name]):
                     try:
@@ -242,7 +216,6 @@ try:
                         continue
                         
     elif input_str.startswith('"'):
-        # Handle string input
         input_data = json.loads(input_str)
         
         if 'solution' in globals():
@@ -261,7 +234,6 @@ try:
                         continue
                         
     else:
-        # Handle numeric input
         try:
             input_data = float(input_str)
             if input_data.is_integer():
@@ -282,9 +254,7 @@ try:
     
     expected = json.loads(expected_str)
     
-    # Compare results
     if isinstance(result, list) and isinstance(expected, list):
-        # For arrays, try both exact and sorted comparison
         passed = result == expected or sorted(result) == sorted(expected)
     else:
         passed = result == expected
@@ -304,10 +274,9 @@ except Exception as e:
         const testFile = join(tempDir, `test_${i}.py`)
         writeFileSync(testFile, testScript)
         
-        // Execute the test
         const python = spawn('python', [testFile], {
           cwd: tempDir,
-          timeout: 10000 // 10 second timeout
+          timeout: 10000
         })
         
         let output = ''
@@ -362,7 +331,6 @@ except Exception as e:
           
           completedTests++
           if (completedTests === testCases.length) {
-            // Cleanup temporary files
             try {
               unlinkSync(pythonFile)
               for (let j = 0; j < testCases.length; j++) {
@@ -403,7 +371,6 @@ except Exception as e:
   })
 }
 
-// Placeholder for other languages
 async function executeJava(code: string, testCases: TestCase[]): Promise<TestResult[]> {
   return [{
     name: 'Java Execution',
@@ -425,7 +392,6 @@ async function executeCpp(code: string, testCases: TestCase[]): Promise<TestResu
 }
 
 async function executeTypeScript(code: string, testCases: TestCase[]): Promise<TestResult[]> {
-  // For now, treat TypeScript as JavaScript (basic support)
   return executeJavaScript(code, testCases)
 }
 
@@ -446,7 +412,6 @@ export async function POST(request: NextRequest) {
 
     let results: TestResult[] = []
 
-    // Execute based on language
     const lang = language?.toLowerCase() || 'javascript'
     
     switch (lang) {

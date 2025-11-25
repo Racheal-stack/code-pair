@@ -5,7 +5,6 @@ import path from 'path'
 
 const challengesFilePath = path.join(process.cwd(), 'challenges.json')
 
-// Challenge interface
 interface Challenge {
   id: string
   title: string
@@ -24,7 +23,6 @@ interface Challenge {
   }>
 }
 
-// Load challenges from file
 function loadChallenges(): Challenge[] {
   try {
     if (fs.existsSync(challengesFilePath)) {
@@ -37,7 +35,6 @@ function loadChallenges(): Challenge[] {
   return []
 }
 
-// Save challenges to file
 function saveChallenges(challenges: Challenge[]): void {
   try {
     fs.writeFileSync(challengesFilePath, JSON.stringify(challenges, null, 2))

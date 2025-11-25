@@ -38,7 +38,6 @@ export default function InterviewMonitorPage({}: InterviewMonitorProps) {
       const token = getCurrentToken()
       const interviewId = params.id as string
       
-      // Fetch interview details
       const interviewRes = await fetch(`/api/interviews/${interviewId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -47,7 +46,6 @@ export default function InterviewMonitorPage({}: InterviewMonitorProps) {
         const interviewData = await interviewRes.json()
         setInterview(interviewData.interview)
         
-        // Verify user is the interviewer
         if (interviewData.interview.interviewerEmail !== user?.email && 
             interviewData.interview.interviewer !== user?.name) {
           router.push("/dashboard")
@@ -144,7 +142,6 @@ export default function InterviewMonitorPage({}: InterviewMonitorProps) {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-foreground">{interview.title}</h1>
@@ -168,7 +165,6 @@ export default function InterviewMonitorPage({}: InterviewMonitorProps) {
           </div>
         </div>
 
-        {/* Interview Details */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           <div className="lg:col-span-2 bg-card border border-border rounded-lg p-6">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -215,7 +211,6 @@ export default function InterviewMonitorPage({}: InterviewMonitorProps) {
             )}
           </div>
 
-          {/* Control Panel */}
           <div className="bg-card border border-border rounded-lg p-6">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <Eye className="w-5 h-5" />
@@ -264,20 +259,19 @@ export default function InterviewMonitorPage({}: InterviewMonitorProps) {
               <h3 className="font-medium mb-2">Quick Actions</h3>
               <div className="space-y-2 text-sm">
                 <p className="text-foreground/60">
-                  • Monitor candidate progress in real-time
+                  Monitor candidate progress in real-time
                 </p>
                 <p className="text-foreground/60">
-                  • Join video call when ready
+                  Join video call when ready
                 </p>
                 <p className="text-foreground/60">
-                  • End interview when complete
+                  End interview when complete
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Challenges and Questions */}
         {(interview.selectedChallenges?.length > 0 || interview.questions?.length > 0) && (
           <div className="bg-card border border-border rounded-lg p-6 mb-6">
             <h2 className="text-lg font-semibold mb-4">Interview Content</h2>
@@ -306,7 +300,6 @@ export default function InterviewMonitorPage({}: InterviewMonitorProps) {
           </div>
         )}
 
-        {/* Participant Status */}
         <div className="bg-card border border-border rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Users className="w-5 h-5" />

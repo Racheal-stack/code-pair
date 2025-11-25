@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { userStorage, type User } from '@/lib/user-storage'
 
-// Define the schema for signup validation
 const signupSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
@@ -14,7 +13,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    // Validate the request body
     const result = signupSchema.safeParse(body)
     
     if (!result.success) {
@@ -26,7 +24,6 @@ export async function POST(request: NextRequest) {
     
     const { name, email, password, role } = result.data
     
-    // Check if user already exists
     const existingUser = userStorage.findByEmail(email)
     if (existingUser) {
       return NextResponse.json(
@@ -35,12 +32,11 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    // Create new user
     const newUser: User = {
       id: Date.now().toString(),
       name,
       email,
-      password, // In a real app, hash the password
+      password,
       role
     }
     
@@ -48,10 +44,8 @@ export async function POST(request: NextRequest) {
     userStorage.add(newUser)
     console.log('All users after signup:', userStorage.getAll())
     
-    // Generate a simple token (in a real app, use JWT)
     const token = Buffer.from(`${newUser.id}:${newUser.email}`).toString('base64')
     
-    // Return success response
     return NextResponse.json({
       message: 'User created successfully',
       token,

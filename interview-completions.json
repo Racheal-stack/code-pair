@@ -3,7 +3,7 @@
     "id": "1764007147961",
     "interviewId": "1764006106535",
     "completionReason": "manual_submit",
-    "finalCode": "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nfunction twoSum(nums, target) {\n    // Write your solution here\n    // Return the indices of the two numbers that add up to target\n    \n}",
+    "finalCode": "function twoSum(nums, target) {\n    \n    \n}",
     "selectedChallenge": "1764000169256",
     "timeRemaining": 3518,
     "completedAt": "2025-11-24T17:59:07.770Z",

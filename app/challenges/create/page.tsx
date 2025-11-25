@@ -108,7 +108,6 @@ export default function CreateChallengePage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Basic Information */}
           <div className="bg-secondary/50 border border-border rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <FileText className="w-5 h-5" />
@@ -191,7 +190,6 @@ export default function CreateChallengePage() {
               />
             </div>
 
-            {/* Tags */}
             <div>
               <label className="block text-sm font-medium mb-2">Tags</label>
               <div className="space-y-2">
@@ -227,7 +225,6 @@ export default function CreateChallengePage() {
             </div>
           </div>
 
-          {/* Code Section */}
           <div className="bg-secondary/50 border border-border rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <Code className="w-5 h-5" />
@@ -241,7 +238,7 @@ export default function CreateChallengePage() {
                 value={formData.starterCode}
                 onChange={handleChange}
                 placeholder="function twoSum(nums, target) {
-    // Your code here
+    
 }"
                 rows={8}
                 className="w-full px-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition font-mono text-sm"
@@ -249,7 +246,6 @@ export default function CreateChallengePage() {
             </div>
           </div>
 
-          {/* Test Cases */}
           <div className="bg-secondary/50 border border-border rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Test Cases</h2>
             

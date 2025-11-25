@@ -27,10 +27,8 @@ function InterviewPageContent() {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
 
   useEffect(() => {
-    // Check if interview was just created
     if (searchParams.get('created') === 'true') {
       setShowSuccessMessage(true)
-      // Remove the query param from URL
       const newUrl = window.location.pathname
       window.history.replaceState({}, '', newUrl)
     }
@@ -46,7 +44,6 @@ function InterviewPageContent() {
     if (userData) {
       setUser(userData)
       
-      // Fetch real interviews from API
       const fetchInterviews = async () => {
         try {
           const token = getCurrentToken()
@@ -84,13 +81,10 @@ function InterviewPageContent() {
     router.push('/interview/create')
   }
 
-  // Filter interviews based on user role
   const filteredInterviews = interviews.filter(interview => {
     if (user.role === 'CANDIDATE') {
-      // Candidates only see interviews where they are the candidate
       return interview.candidate === user.name || interview.candidate === user.email
     } else if (user.role === 'INTERVIEWER') {
-      // Interviewers see interviews where they are the interviewer or all interviews they can manage
       return interview.interviewer === user.name || interview.interviewer === user.email
     }
     return false

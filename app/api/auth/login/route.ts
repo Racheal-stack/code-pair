@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { userStorage } from '@/lib/user-storage'
 
-// Define the schema for login validation
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(1, 'Password is required')
@@ -12,7 +11,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    // Validate the request body
     const result = loginSchema.safeParse(body)
     
     if (!result.success) {
@@ -24,14 +22,12 @@ export async function POST(request: NextRequest) {
     
     const { email, password } = result.data
     
-    // Debug: Log login attempt
     console.log('=== LOGIN ATTEMPT ===')
     console.log('Email:', email)
     console.log('Password:', password)
     console.log('Total users in storage:', userStorage.getAll().length)
     console.log('All users emails:', userStorage.getAll().map(u => u.email))
     
-    // Find user by email
     const user = userStorage.findByEmail(email)
     console.log('Found user:', user ? { email: user.email, password: user.password } : null)
     
@@ -56,10 +52,8 @@ export async function POST(request: NextRequest) {
     
     console.log('✅ Login successful for:', email)
     
-    // Generate a simple token (in a real app, use JWT)
     const token = Buffer.from(`${user.id}:${user.email}`).toString('base64')
     
-    // Return success response
     return NextResponse.json({
       message: 'Login successful',
       token,

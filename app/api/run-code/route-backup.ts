@@ -17,7 +17,6 @@ export async function POST(request: NextRequest) {
     const results = []
 
     try {
-      // Create a safe evaluation environment
       const safeGlobal = {
         console: {
           log: (...args: any[]) => console.log('User code:', ...args)
@@ -32,11 +31,9 @@ export async function POST(request: NextRequest) {
         Number
       }
 
-      // Execute the user code in a controlled environment
       const codeToExecute = `
         ${code}
         
-        // Export the main function
         let mainFunction;
         if (typeof twoSum !== 'undefined') {
           mainFunction = twoSum;
@@ -49,8 +46,7 @@ export async function POST(request: NextRequest) {
         } else if (typeof reverseString !== 'undefined') {
           mainFunction = reverseString;
         } else {
-          // Try to find any function in the code
-          const functionMatch = code.match(/function\\s+(\\w+)\\s*\\(/);
+          const functionMatch = code.match(/function\s+(\w+)\s*\(/);
           if (functionMatch) {
             mainFunction = eval(functionMatch[1]);
           }
@@ -59,7 +55,6 @@ export async function POST(request: NextRequest) {
         mainFunction;
       `
 
-      // Use Function constructor for safer evaluation
       const func = new Function('console', 'Math', 'parseInt', 'parseFloat', 'JSON', 'Array', 'Object', 'String', 'Number', `return (${codeToExecute})`)
       const userFunction = func(safeGlobal.console, safeGlobal.Math, safeGlobal.parseInt, safeGlobal.parseFloat, safeGlobal.JSON, safeGlobal.Array, safeGlobal.Object, safeGlobal.String, safeGlobal.Number)
 
@@ -73,7 +68,6 @@ export async function POST(request: NextRequest) {
         }])
       }
 
-      // Run each test case
       for (let i = 0; i < testCases.length; i++) {
         const testCase = testCases[i]
         
@@ -81,15 +75,12 @@ export async function POST(request: NextRequest) {
           let actualResult
           let expectedResult
 
-          // Parse different input formats
           if (testCase.input.includes('target:')) {
-            // Handle Two Sum format: [2,7,11,15] target: 9
             const [arrayPart, targetPart] = testCase.input.split('target:')
             const nums = JSON.parse(arrayPart.trim())
             const target = parseInt(targetPart.trim())
             actualResult = userFunction(nums, target)
           } else if (testCase.input.startsWith('[') && testCase.input.includes('],')) {
-            // Handle multiple array inputs
             const inputs = testCase.input.split('],').map((part, index, arr) => {
               if (index < arr.length - 1) {
                 return JSON.parse(part + ']')
@@ -99,15 +90,12 @@ export async function POST(request: NextRequest) {
             })
             actualResult = userFunction(...inputs)
           } else if (testCase.input.startsWith('[')) {
-            // Handle single array input
             const inputArray = JSON.parse(testCase.input)
             actualResult = userFunction(inputArray)
           } else if (testCase.input.startsWith('"')) {
-            // Handle string input
             const inputString = JSON.parse(testCase.input)
             actualResult = userFunction(inputString)
           } else {
-            // Handle numeric or other simple inputs
             const numericInput = parseFloat(testCase.input)
             if (!isNaN(numericInput)) {
               actualResult = userFunction(numericInput)
@@ -118,10 +106,8 @@ export async function POST(request: NextRequest) {
 
           expectedResult = JSON.parse(testCase.expectedOutput)
 
-          // Compare results (arrays need special handling)
           let passed = false
           if (Array.isArray(actualResult) && Array.isArray(expectedResult)) {
-            // For arrays, sort both before comparing (for problems like Two Sum where order might vary)
             if (actualResult.length === expectedResult.length) {
               const sortedActual = [...actualResult].sort((a, b) => a - b)
               const sortedExpected = [...expectedResult].sort((a, b) => a - b)

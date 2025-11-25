@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { EmailService } from '@/lib/email-service'
 
-// Schema for invitation validation
 const invitationSchema = z.object({
   interviewId: z.string(),
   candidateEmail: z.string().email(),
@@ -17,7 +16,6 @@ const invitationSchema = z.object({
   selectedChallenges: z.array(z.string()).optional()
 })
 
-// In-memory storage for invitations (in production, use a database)
 let invitations: Array<{
   id: string
   interviewId: string
@@ -32,7 +30,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    // Validate the request body
     const result = invitationSchema.safeParse(body)
     
     if (!result.success) {
@@ -44,10 +41,8 @@ export async function POST(request: NextRequest) {
     
     const invitationData = result.data
     
-    // Generate invitation token
     const invitationToken = Buffer.from(`${invitationData.interviewId}:${invitationData.candidateEmail}:${Date.now()}`).toString('base64')
     
-    // Create invitation record
     const invitation = {
       id: Date.now().toString(),
       interviewId: invitationData.interviewId,
@@ -62,7 +57,6 @@ export async function POST(request: NextRequest) {
     
     const invitationLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/interview/join/${invitationToken}`
     
-    // Send actual email
     const emailData = EmailService.createInvitationEmail({
       candidateEmail: invitationData.candidateEmail,
       interviewTitle: invitationData.interviewTitle,
@@ -106,7 +100,6 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    // Get all invitations (in production, filter by user permissions)
     return NextResponse.json({
       invitations: invitations.map(inv => ({
         id: inv.id,

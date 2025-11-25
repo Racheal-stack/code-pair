@@ -30,7 +30,6 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Sidebar */}
       <div
         className={`fixed left-0 top-0 h-screen bg-secondary border-r border-border transition-all ${
           sidebarOpen ? "w-64" : "w-20"
@@ -99,7 +98,6 @@ export default function DashboardLayout({
         </div>
       </div>
 
-      {/* Main Content */}
       <div className={`transition-all ${sidebarOpen ? "ml-64" : "ml-20"}`}>
         <div className="p-8 max-w-7xl mx-auto">{children}</div>
       </div>

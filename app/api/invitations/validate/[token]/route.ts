@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// In-memory storage for invitations (should match the one in route.ts)
 let invitations: Array<{
   id: string
   interviewId: string
@@ -18,7 +17,6 @@ export async function GET(
   try {
     const { token } = await params
     
-    // Find the invitation by token
     const invitation = invitations.find(inv => inv.token === token)
     
     if (!invitation) {
@@ -28,9 +26,8 @@ export async function GET(
       )
     }
     
-    // Check if invitation is still valid (not older than 7 days)
     const invitationAge = Date.now() - new Date(invitation.sentAt).getTime()
-    const maxAge = 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
+    const maxAge = 7 * 24 * 60 * 60 * 1000
     
     if (invitationAge > maxAge) {
       return NextResponse.json(

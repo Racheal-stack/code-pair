@@ -77,20 +77,18 @@ export default function AssessmentPage({ params }: { params: Promise<{ id: strin
           setChallenges(data.challenges || [])
           setIsCompleted(data.isCompleted)
           
-          // Initialize solutions with starter code
           const initialSolutions: Record<string, Solution> = {}
           const initialTimeSpent: Record<string, number> = {}
           
           data.challenges.forEach((challenge: Challenge) => {
             initialSolutions[challenge.id] = {
               challengeId: challenge.id,
-              code: challenge.starterCode || '// Write your solution here',
+              code: challenge.starterCode || '',
               timeSpent: 0
             }
             initialTimeSpent[challenge.id] = 0
           })
           
-          // If assessment is completed, load existing solutions
           if (data.assessment?.solutions) {
             data.assessment.solutions.forEach((sol: Solution) => {
               initialSolutions[sol.challengeId] = sol
@@ -115,7 +113,6 @@ export default function AssessmentPage({ params }: { params: Promise<{ id: strin
   }, [user, assessmentId, router])
 
   useEffect(() => {
-    // Track time spent on current challenge
     const interval = setInterval(() => {
       if (challenges.length > 0 && !isCompleted) {
         const currentChallenge = challenges[currentChallengeIndex]
@@ -237,7 +234,6 @@ export default function AssessmentPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <div className="border-b border-border bg-secondary/50">
         <div className="max-w-7xl mx-auto p-4">
           <div className="flex items-center justify-between">
@@ -281,7 +277,6 @@ export default function AssessmentPage({ params }: { params: Promise<{ id: strin
 
       <div className="max-w-7xl mx-auto p-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-200px)]">
-          {/* Challenge Description */}
           <div className="bg-secondary/50 border border-border rounded-lg p-6 overflow-y-auto">
             <div className="mb-6">
               <div className="flex items-center justify-between mb-4">
@@ -328,7 +323,6 @@ export default function AssessmentPage({ params }: { params: Promise<{ id: strin
             )}
           </div>
 
-          {/* Code Editor */}
           <div className="bg-secondary/50 border border-border rounded-lg overflow-hidden">
             <div className="border-b border-border p-4">
               <div className="flex items-center justify-between">
@@ -354,7 +348,6 @@ export default function AssessmentPage({ params }: { params: Promise<{ id: strin
           </div>
         </div>
 
-        {/* Navigation and Submit */}
         <div className="flex items-center justify-between mt-6 p-4 bg-secondary/50 border border-border rounded-lg">
           <div className="flex gap-2">
             <button

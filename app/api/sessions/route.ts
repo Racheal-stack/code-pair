@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Mock data for demo purposes
 const mockSessions = [
   {
     id: "1",
@@ -26,7 +25,6 @@ const mockSessions = [
 
 export async function GET(request: NextRequest) {
   try {
-    // In a real app, verify the token and get user-specific sessions
     const authorization = request.headers.get('authorization')
     
     if (!authorization || !authorization.startsWith('Bearer ')) {
@@ -36,7 +34,6 @@ export async function GET(request: NextRequest) {
       )
     }
     
-    // Return mock sessions
     return NextResponse.json(mockSessions)
     
   } catch (error) {

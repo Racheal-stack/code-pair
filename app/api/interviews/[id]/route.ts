@@ -4,7 +4,6 @@ import path from 'path'
 
 const interviewsFilePath = path.join(process.cwd(), 'interviews.json')
 
-// Load interviews from file
 function loadInterviews() {
   try {
     if (fs.existsSync(interviewsFilePath)) {
@@ -17,7 +16,6 @@ function loadInterviews() {
   return []
 }
 
-// Save interviews to file
 function saveInterviews(interviews: any[]) {
   try {
     fs.writeFileSync(interviewsFilePath, JSON.stringify(interviews, null, 2))
@@ -54,7 +52,6 @@ export async function GET(
   }
 }
 
-// PUT update interview
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -69,12 +66,11 @@ export async function PUT(
       return NextResponse.json({ error: 'Interview not found' }, { status: 404 })
     }
     
-    // Update interview while preserving some fields
     const existingInterview = interviews[interviewIndex]
     const updatedInterview = {
       ...existingInterview,
       ...body,
-      id: id, // Preserve ID
+      id: id,
       updatedAt: new Date().toISOString()
     }
     
@@ -91,7 +87,6 @@ export async function PUT(
   }
 }
 
-// DELETE interview
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -105,7 +100,6 @@ export async function DELETE(
       return NextResponse.json({ error: 'Interview not found' }, { status: 404 })
     }
     
-    // Check if interview is active
     const interview = interviews[interviewIndex]
     if (interview.status === 'active') {
       return NextResponse.json({ 

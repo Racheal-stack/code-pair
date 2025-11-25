@@ -252,7 +252,6 @@ export default function EditInterviewPage() {
             </div>
           </div>
 
-          {/* Platform Settings */}
           <div className="bg-secondary/50 border border-border rounded-lg p-6">
             <h2 className="text-lg font-semibold mb-4">Platform Settings</h2>
             
@@ -288,7 +287,6 @@ export default function EditInterviewPage() {
             </div>
           </div>
 
-          {/* Assessment Mode */}
           <div className="bg-secondary/50 border border-border rounded-lg p-6">
             <h2 className="text-lg font-semibold mb-4">Assessment Configuration</h2>
             

@@ -19,29 +19,23 @@ function CandidateTasks({ user }: CandidateTasksProps) {
       if (!user?.email) return
       
       try {
-        // Fetch interviews assigned to candidate
         const token = getCurrentToken()
         const interviewsRes = await fetch('/api/interviews', {
           headers: { Authorization: `Bearer ${token}` }
         })
         
-        // Fetch assessments assigned to candidate
         const assessmentsRes = await fetch(`/api/assessments?candidateEmail=${encodeURIComponent(user.email)}`)
         
         const interviewsData = interviewsRes.ok ? await interviewsRes.json() : { interviews: [] }
         const assessmentsData = assessmentsRes.ok ? await assessmentsRes.json() : { assessments: [] }
         
-        // Filter interviews for this candidate
         const candidateInterviews = (interviewsData.interviews || []).filter((interview: any) => 
           interview.candidateEmail === user.email || interview.candidate === user.email || interview.candidate === user.name
         )
         
-        // Combine tasks from interviews and assessments
         const allTasks: any[] = []
         
-        // Add interview tasks
         candidateInterviews.forEach((interview: any) => {
-          // Add assessment task if interview has pre-assessment
           if (interview.selectedChallenges && interview.selectedChallenges.length > 0 && 
               (interview.assessmentMode === 'assessment' || interview.assessmentMode === 'both')) {
             const assessment = assessmentsData.assessments?.find((a: any) => a.id === interview.id)
@@ -60,7 +54,6 @@ function CandidateTasks({ user }: CandidateTasksProps) {
             })
           }
           
-          // Add interview session task
           allTasks.push({
             id: `interview-${interview.id}`,
             type: 'interview',
@@ -80,7 +73,6 @@ function CandidateTasks({ user }: CandidateTasksProps) {
           })
         })
         
-        // Sort tasks by priority and date
         allTasks.sort((a: any, b: any) => {
           const priorityOrder: Record<string, number> = { urgent: 0, high: 1, medium: 2, low: 3 }
           if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
@@ -103,7 +95,6 @@ function CandidateTasks({ user }: CandidateTasksProps) {
   const handleTaskClick = (task: any) => {
     if (task.status === 'completed') return
     
-    // Check user role to determine routing
     const isInterviewer = user?.role === 'INTERVIEWER' || user?.role === 'interviewer'
     const isCandidate = user?.role === 'CANDIDATE' || user?.role === 'candidate'
     
@@ -111,13 +102,10 @@ function CandidateTasks({ user }: CandidateTasksProps) {
       router.push(`/assessment/${task.interviewId}`)
     } else if (task.type === 'interview') {
       if (isInterviewer) {
-        // Interviewers go to monitoring interface
         router.push(`/interview/monitor/${task.interviewId}`)
       } else if (isCandidate) {
-        // Candidates go to code editor
         router.push(`/interview/${task.interviewId}`)
       } else {
-        // Fallback for unknown roles
         console.warn('Unknown user role:', user?.role)
         router.push(`/interview/monitor/${task.interviewId}`)
       }
@@ -189,7 +177,6 @@ function CandidateTasks({ user }: CandidateTasksProps) {
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Pending Tasks */}
           {pendingTasks.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold mb-4 text-yellow-400">📌 Pending Tasks ({pendingTasks.length})</h3>
@@ -260,7 +247,6 @@ function CandidateTasks({ user }: CandidateTasksProps) {
             </div>
           )}
 
-          {/* Completed Tasks */}
           {completedTasks.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold mb-4 text-green-400">✅ Completed Tasks ({completedTasks.length})</h3>
@@ -318,7 +304,6 @@ function InterviewStats({ user }: InterviewStatsProps) {
         const data = await res.json()
         const allInterviews = data.interviews || []
         
-        // Filter interviews created by this interviewer
         const userInterviews = allInterviews.filter((interview: any) => {
           return interview.interviewer === user.name || 
                  interview.interviewer === user.email || 
@@ -430,7 +415,6 @@ function InterviewStats({ user }: InterviewStatsProps) {
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Pending/Active Interviews */}
           {pendingInterviews.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold mb-4 text-blue-400">📋 Active Interviews ({pendingInterviews.length})</h3>
@@ -515,7 +499,6 @@ function InterviewStats({ user }: InterviewStatsProps) {
             </div>
           )}
 
-          {/* Completed Interviews */}
           {completedInterviews.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold mb-4 text-green-400">✅ Completed Interviews ({completedInterviews.length})</h3>
@@ -547,7 +530,6 @@ function InterviewStats({ user }: InterviewStatsProps) {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-secondary border border-border rounded-lg p-6 max-w-md">

@@ -20,7 +20,6 @@ export default function AuthDebugPage() {
         tokenPreview: currentToken ? `${currentToken.substring(0, 20)}...` : null
       })
 
-      // Get all sessions from localStorage
       const sessions = []
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i)
@@ -48,7 +47,6 @@ export default function AuthDebugPage() {
 
     updateSessionInfo()
     
-    // Update every second to show real-time changes
     const interval = setInterval(updateSessionInfo, 1000)
     return () => clearInterval(interval)
   }, [])
@@ -72,7 +70,6 @@ export default function AuthDebugPage() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-6">🔐 Multi-Tab Authentication Debug</h1>
         
-        {/* Current Session Info */}
         <div className="bg-secondary/50 border border-border rounded-lg p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4 text-blue-400">📍 Current Active Session</h2>
           {sessionInfo ? (
@@ -90,7 +87,6 @@ export default function AuthDebugPage() {
           )}
         </div>
 
-        {/* All Sessions */}
         <div className="bg-secondary/50 border border-border rounded-lg p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4 text-green-400">👥 All Sessions in LocalStorage</h2>
           {allSessions.length > 0 ? (
@@ -155,7 +151,6 @@ export default function AuthDebugPage() {
           )}
         </div>
 
-        {/* Instructions */}
         <div className="bg-secondary/50 border border-border rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4 text-yellow-400">📋 Multi-Tab Testing Instructions</h2>
           <div className="space-y-3 text-sm">
@@ -187,7 +182,6 @@ export default function AuthDebugPage() {
           </div>
         </div>
 
-        {/* Quick Actions */}
         <div className="mt-6 flex gap-4">
           <button
             onClick={() => window.location.href = '/login'}

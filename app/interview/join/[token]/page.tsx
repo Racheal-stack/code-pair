@@ -31,7 +31,6 @@ export default function JoinInterviewPage() {
       return
     }
 
-    // Validate the invitation token with the API
     const validateInvitation = async () => {
       try {
         const response = await fetch(`/api/invitations/validate/${token}`)
@@ -71,13 +70,11 @@ export default function JoinInterviewPage() {
 
   const joinInterview = () => {
     if (invitation) {
-      // Check if user is logged in
       const currentSession = localStorage.getItem('currentSession')
       const token = currentSession ? localStorage.getItem(`token_${currentSession}`) : null
       const userStr = currentSession ? localStorage.getItem(`user_${currentSession}`) : null
       
       if (!token || !userStr) {
-        // User not logged in, redirect to signup with invitation info
         const invitationInfo = encodeURIComponent(JSON.stringify({
           token: params.token,
           email: invitation.candidateEmail,
@@ -88,7 +85,6 @@ export default function JoinInterviewPage() {
         return
       }
       
-      // User is logged in, join the interview
       router.push(`/interview/${invitation.interviewId}`)
     }
   }

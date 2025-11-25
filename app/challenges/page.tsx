@@ -14,14 +14,12 @@ export default function ChallengesPage() {
   const [successMessage, setSuccessMessage] = useState("")
 
   useEffect(() => {
-    // Check URL params for success messages
     const urlParams = new URLSearchParams(window.location.search)
     const created = urlParams.get('created')
     
     if (created === 'true') {
       setSuccessMessage('Challenge created successfully!')
       setShowSuccessMessage(true)
-      // Clean URL
       window.history.replaceState({}, '', '/challenges')
     }
   }, [])
